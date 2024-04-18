@@ -27,3 +27,9 @@ function logout() {
     msalInstance.logout();
 }
 
+if (localStorage) {
+    localStorage.clear(); // Clears localStorage data
+}
+if (sessionStorage) {
+    sessionStorage.clear(); // Clears sessionStorage data
+}
