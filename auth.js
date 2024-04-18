@@ -15,19 +15,15 @@ const msalConfig = {
 // Creating an instance of MSAL
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-// Function to handle user login
 function login() {
     msalInstance.loginRedirect({
-        scopes: ["openid", "profile"]  // Adjust these scopes according to your requirements
+        scopes: ["openid"]  // Only request the scopes you need; "openid" is usually sufficient for authenticating and getting basic user info.
     }).catch(e => {
-        console.error('Login Error:', e);
+        console.error("Login Error:", e);
     });
 }
 
-// Function to handle user logout
 function logout() {
     msalInstance.logout();
 }
 
-// Log to console that auth.js has loaded
-console.log("auth.js loaded successfully");
