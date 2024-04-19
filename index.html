@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HeyHooley Web App</title>
+    <title>My Application</title>
 </head>
 <body>
-    <h1>Welcome to HeyHooley Web App</h1>
-    <button onclick="login()">Login</button> 
-    <button onclick="logout()">Logout</button> 
+    <div id="loginButton" style="display:none;">
+        <button onclick="login()">Login</button>
+    </div>
+    <div id="logoutButton" style="display:none;">
+        <button onclick="logout()">Logout</button>
+    </div>
+    <div id="userInfo" style="display:none;">
+        <!-- User information displayed here -->
+    </div>
 
-    <button onclick="clearMsalCache()">Clear Cache</button> <!-- Debugging Button -->
-
-    <!-- Include MSAL.js library -->
     <script src="https://alcdn.msauth.net/browser/2.19.0/js/msal-browser.min.js"></script>
-    <!-- Authentication Script -->
     <script src="auth.js"></script>
 </body>
 </html>
