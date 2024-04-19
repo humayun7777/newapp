@@ -1,77 +1,71 @@
-// MSAL configuration object
+// Configuration for MSAL
 const msalConfig = {
     auth: {
-        clientId: "6cec9e80-48f0-4873-9776-076045267714",
-        authority: "https://heyhooley.b2clogin.com/heyhooley.onmicrosoft.com/B2C_1_signupsignin",
-        redirectUri: "https://orange-sky-0e951470f.5.azurestaticapps.net",
-        knownAuthorities: ["heyhooley.b2clogin.com"]  // Specify your B2C login domain as a known authority
+        clientId: "6cec9e80-48f0-4873-9776-076045267714", // Your Application (client) ID from Azure AD B2C
+        authority: "https://heyhooley.b2clogin.com/heyhooley.onmicrosoft.com/B2C_1_signupsignin", // Authority URL
+        redirectUri: "https://orange-sky-0e951470f.5.azurestaticapps.net", // Redirect URI configured in Azure AD B2C
+        knownAuthorities: ["heyhooley.b2clogin.com"], // Add your Azure AD B2C domain to the known authorities
     },
     cache: {
-        cacheLocation: "sessionStorage",  // MSAL will use the browser's session storage
-        storeAuthStateInCookie: true  // Necessary for some browsers to maintain state across redirects
+        cacheLocation: "sessionStorage", // Store tokens in sessionStorage
+        storeAuthStateInCookie: true, // Use cookies to store session state for stability across page refreshes
     }
 };
 
-// Create an instance of MSAL.PublicClientApplication with the configuration
+// Create an instance of PublicClientApplication with the configuration
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-// Handle redirect promise needed to process responses from the authentication server
-msalInstance.handleRedirectPromise()
-    .then(response => {
-        if (response) {
-            console.log("Redirect response received, user logged in:", response);
-        } else {
-            console.log("No redirect response, user not logged in.");
-        }
-    })
-    .catch(err => {
-        console.error("Error processing redirect:", err);
-    });
+// Function to handle response from authentication redirect
+function handleResponse(response) {
+    if (response !== null) {
+        console.log("Authenticated successfully!", response);
+        updateUI();
+    } else {
+        console.log("Not authenticated. User may need to log in.");
+        checkAccount();
+    }
+}
 
-// Function to initiate the login process using a redirect
+// Check whether the user is already logged in
+function checkAccount() {
+    const currentAccounts = msalInstance.getAllAccounts();
+    if (currentAccounts.length === 1) {
+        console.log("User already logged in:", currentAccounts[0]);
+        updateUI();
+    }
+}
+
+// Login function to initiate the login process
 function login() {
     msalInstance.loginRedirect({
-        scopes: ["openid", "profile"]  // Adjust these scopes according to your needs
-    }).catch(e => {
-        console.error("Login Error:", e);
+        scopes: ["openid", "profile"] // Request permissions to access user profile
     });
 }
 
-// Function to log out the user
+// Logout function to log the user out
 function logout() {
     msalInstance.logout();
 }
 
-// Function to manually clear MSAL cache if needed
-function clearMsalCache() {
-    sessionStorage.clear();  // Clear all session storage (be cautious with this in a production environment)
-    console.log("Session storage cleared.");
+// Function to update the UI based on user's login status
+function updateUI() {
+    const currentAccounts = msalInstance.getAllAccounts();
+    if (currentAccounts.length === 1) {
+        document.getElementById('loginButton').style.display = 'none';
+        document.getElementById('logoutButton').style.display = 'block';
+        document.getElementById('userInfo').innerText = `Welcome, ${currentAccounts[0].name}`;
+    } else {
+        document.getElementById('loginButton').style.display = 'block';
+        document.getElementById('logoutButton').style.display = 'none';
+        document.getElementById('userInfo').innerText = '';
+    }
 }
-// auth.js file
+
+// Register callbacks for handling the response
+msalInstance.handleRedirectPromise().then(handleResponse).catch(err => {
+    console.error("Error handling redirect:", err);
+});
 
 document.addEventListener('DOMContentLoaded', function () {
-    const msalInstance = new msal.PublicClientApplication(msalConfig);
-
-    msalInstance.handleRedirectPromise()
-        .then(response => {
-            updateUIBasedOnAuthState(response);
-        })
-        .catch(err => {
-            console.error("Error processing redirect:", err);
-        });
-
-    function updateUIBasedOnAuthState(response) {
-        if (response) {
-            console.log("User is logged in", response.account);
-            document.getElementById('loginButton').style.display = 'none';
-            document.getElementById('logoutButton').style.display = 'block';
-            document.getElementById('userInfo').innerText = `Welcome, ${response.account.name}`;
-        } else {
-            document.getElementById('loginButton').style.display = 'block';
-            document.getElementById('logoutButton').style.display = 'none';
-        }
-    }
-
-    document.getElementById('loginButton').addEventListener('click', login);
-    document.getElementById('logoutButton').addEventListener('click', logout);
+    checkAccount(); // Check login state as soon as the script loads
 });
