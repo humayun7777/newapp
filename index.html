@@ -7,16 +7,21 @@
 </head>
 <body>
     <div id="loginButton" style="display:none;">
+        <!-- Ensure onclick is correctly handling the login function -->
         <button onclick="login()">Login</button>
     </div>
     <div id="logoutButton" style="display:none;">
+        <!-- Ensure onclick is correctly handling the logout function -->
         <button onclick="logout()">Logout</button>
     </div>
     <div id="userInfo" style="display:none;">
+        <!-- This div will display user information if logged in -->
         <!-- User information displayed here -->
     </div>
 
+    <!-- MSAL JavaScript library to handle authentication -->
     <script src="https://alcdn.msauth.net/browser/2.19.0/js/msal-browser.min.js"></script>
+    <!-- Custom script to handle the UI and authentication logic -->
     <script src="auth.js"></script>
 </body>
 </html>
