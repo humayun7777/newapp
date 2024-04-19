@@ -1,3 +1,15 @@
+msalInstance.handleRedirectPromise()
+    .then((response) => {
+        if (response) {
+            console.log("Authentication response received", response);
+            // Update UI or handle logged-in user information
+            updateUI();
+        }
+    })
+    .catch((error) => {
+        console.error("Error handling redirect:", error);
+    });
+
 // Configuration for MSAL
 const msalConfig = {
     auth: {
