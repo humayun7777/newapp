@@ -3,20 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Application</title>
+    <title>My App</title>
 </head>
 <body>
-    <div id="loginButton" style="display:none;">
-        <button onclick="login()">Login</button>
-    </div>
-    <div id="logoutButton" style="display:none;">
-        <button onclick="logout()">Logout</button>
-    </div>
-    <div id="userInfo" style="display:none;">
-        <!-- User information displayed here -->
-    </div>
+    <button id="loginButton" onclick="login()" style="display:none;">Login</button>
+    <button id="logoutButton" onclick="logout()" style="display:none;">Logout</button>
+    <div id="userInfo"></div>
 
-    <script src="https://alcdn.msauth.net/browser/2.19.0/js/msal-browser.min.js"></script>
     <script src="auth.js"></script>
 </body>
 </html>
