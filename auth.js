@@ -47,3 +47,31 @@ function clearMsalCache() {
     sessionStorage.clear();  // Clear all session storage (be cautious with this in a production environment)
     console.log("Session storage cleared.");
 }
+// auth.js file
+
+document.addEventListener('DOMContentLoaded', function () {
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    msalInstance.handleRedirectPromise()
+        .then(response => {
+            updateUIBasedOnAuthState(response);
+        })
+        .catch(err => {
+            console.error("Error processing redirect:", err);
+        });
+
+    function updateUIBasedOnAuthState(response) {
+        if (response) {
+            console.log("User is logged in", response.account);
+            document.getElementById('loginButton').style.display = 'none';
+            document.getElementById('logoutButton').style.display = 'block';
+            document.getElementById('userInfo').innerText = `Welcome, ${response.account.name}`;
+        } else {
+            document.getElementById('loginButton').style.display = 'block';
+            document.getElementById('logoutButton').style.display = 'none';
+        }
+    }
+
+    document.getElementById('loginButton').addEventListener('click', login);
+    document.getElementById('logoutButton').addEventListener('click', logout);
+});
