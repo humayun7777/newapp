@@ -1,14 +1,4 @@
-msalInstance.handleRedirectPromise()
-    .then((response) => {
-        if (response) {
-            console.log("Authentication response received", response);
-            // Update UI or handle logged-in user information
-            updateUI();
-        }
-    })
-    .catch((error) => {
-        console.error("Error handling redirect:", error);
-    });
+
 
 // Configuration for MSAL
 const msalConfig = {
@@ -23,6 +13,18 @@ const msalConfig = {
         storeAuthStateInCookie: true, // Use cookies to store session state for stability across page refreshes
     }
 };
+
+msalInstance.handleRedirectPromise()
+    .then((response) => {
+        if (response) {
+            console.log("Authentication response received", response);
+            // Update UI or handle logged-in user information
+            updateUI();
+        }
+    })
+    .catch((error) => {
+        console.error("Error handling redirect:", error);
+    });
 
 // Create an instance of PublicClientApplication with the configuration
 const msalInstance = new msal.PublicClientApplication(msalConfig);
