@@ -12,58 +12,71 @@ const msalConfig = {
     }
 };
 
-// Create an instance of PublicClientApplication with the configuration
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-// Handle authentication responses from MSAL
+let interactionInProgress = false;
+
 function handleResponse(response) {
+    interactionInProgress = false;
     if (response !== null) {
-        // Handle the response from a completed authentication
         console.log("Authentication response received", response);
         updateUI(response.account);
     } else {
-        // No response from authentication, check current account
         const currentAccount = msalInstance.getAllAccounts()[0];
         if (currentAccount) {
             console.log("User already logged in.", currentAccount);
             updateUI(currentAccount);
+        } else {
+            updateUI(null);
         }
     }
 }
 
-// Update the UI based on the current account
 function updateUI(account) {
+    const loginButton = document.getElementById('loginButton');
+    const logoutButton = document.getElementById('logoutButton');
+    const userInfo = document.getElementById('userInfo');
+
     if (account) {
-        document.getElementById('loginButton').style.display = 'none';
-        document.getElementById('logoutButton').style.display = 'block';
-        document.getElementById('userInfo').innerText = `Welcome, ${account.name}`;
+        loginButton.style.display = 'none';
+        logoutButton.style.display = 'block';
+        userInfo.innerText = `Welcome, ${account.name}`;
     } else {
-        document.getElementById('loginButton').style.display = 'block';
-        document.getElementById('logoutButton').style.display = 'none';
-        document.getElementById('userInfo').innerText = '';
+        loginButton.style.display = 'block';
+        logoutButton.style.display = 'none';
+        userInfo.innerText = 'Please log in';
     }
 }
 
-// Function to initiate the login process using a redirect
 function login() {
-    msalInstance.loginRedirect({
-        scopes: ["openid", "profile"] // Request permissions to access user profile
-    });
+    if (!interactionInProgress) {
+        interactionInProgress = true;
+        msalInstance.loginRedirect({
+            scopes: ["openid", "profile"]
+        }).catch(err => {
+            console.error("Login Error:", err);
+            interactionInProgress = false;
+        });
+    }
 }
 
-// Function to log the user out
 function logout() {
-    msalInstance.logout();
+    if (!interactionInProgress) {
+        interactionInProgress = true;
+        msalInstance.logout().catch(err => {
+            console.error("Logout Error:", err);
+            interactionInProgress = false;
+        });
+    }
 }
 
-// Register callback for handling the response when the page loads after redirect
 msalInstance.handleRedirectPromise()
     .then(handleResponse)
     .catch(err => {
         console.error("Error handling redirect:", err);
+        interactionInProgress = false;
     });
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Call handleResponse at load to ensure any returning authentication processes are handled
     handleResponse(null);
 });
