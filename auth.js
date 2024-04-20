@@ -9,74 +9,79 @@ const msalConfig = {
     cache: {
         cacheLocation: "sessionStorage", // Store tokens in sessionStorage
         storeAuthStateInCookie: true, // Use cookies to store session state for stability across page refreshes
+    },
+    system: {
+        loggerOptions: {
+            loggerCallback(logLevel, message, containsPii) {
+                console.log(message);
+            },
+            logLevel: msal.LogLevel.Verbose,
+        }
     }
 };
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
+let isInteractionInProgress = false;
 
-let interactionInProgress = false;
-
-function handleResponse(response) {
-    interactionInProgress = false;
-    if (response !== null) {
-        console.log("Authentication response received", response);
-        updateUI(response.account);
-    } else {
-        const currentAccount = msalInstance.getAllAccounts()[0];
-        if (currentAccount) {
-            console.log("User already logged in.", currentAccount);
-            updateUI(currentAccount);
+msalInstance.handleRedirectPromise()
+    .then((response) => {
+        if (response) {
+            console.log("Authentication response received", response);
+            updateUI(response.account);
         } else {
-            updateUI(null);
+            checkAccount();
         }
+    })
+    .catch(err => {
+        console.error("Error handling redirect:", err);
+        isInteractionInProgress = false;
+    });
+
+function checkAccount() {
+    const accounts = msalInstance.getAllAccounts();
+    if (accounts.length === 0) {
+        console.log("No user signed in.");
+        msalInstance.loginRedirect();
+    } else {
+        console.log("User already logged in.", accounts[0]);
+        updateUI(accounts[0]);
     }
 }
 
 function updateUI(account) {
-    const loginButton = document.getElementById('loginButton');
-    const logoutButton = document.getElementById('logoutButton');
-    const userInfo = document.getElementById('userInfo');
-
     if (account) {
-        loginButton.style.display = 'none';
-        logoutButton.style.display = 'block';
-        userInfo.innerText = `Welcome, ${account.name}`;
+        document.getElementById('loginButton').style.display = 'none';
+        document.getElementById('logoutButton').style.display = 'block';
+        document.getElementById('userInfo').innerText = `Welcome, ${account.name}`;
     } else {
-        loginButton.style.display = 'block';
-        logoutButton.style.display = 'none';
-        userInfo.innerText = 'Please log in';
+        document.getElementById('loginButton').style.display = 'block';
+        document.getElementById('logoutButton').style.display = 'none';
+        document.getElementById('userInfo').innerText = 'Please log in';
     }
 }
 
 function login() {
-    if (!interactionInProgress) {
-        interactionInProgress = true;
+    if (!isInteractionInProgress) {
+        isInteractionInProgress = true;
         msalInstance.loginRedirect({
             scopes: ["openid", "profile"]
-        }).catch(err => {
-            console.error("Login Error:", err);
-            interactionInProgress = false;
+        }).finally(() => {
+            isInteractionInProgress = false;
         });
     }
 }
 
 function logout() {
-    if (!interactionInProgress) {
-        interactionInProgress = true;
-        msalInstance.logout().catch(err => {
-            console.error("Logout Error:", err);
-            interactionInProgress = false;
+    if (!isInteractionInProgress) {
+        isInteractionInProgress = true;
+        msalInstance.logout().finally(() => {
+            isInteractionInProgress = false;
         });
     }
 }
 
-msalInstance.handleRedirectPromise()
-    .then(handleResponse)
-    .catch(err => {
-        console.error("Error handling redirect:", err);
-        interactionInProgress = false;
-    });
-
 document.addEventListener('DOMContentLoaded', function () {
-    handleResponse(null);
+    if (!msalInstance.getAllAccounts().length) {
+        msalInstance.loginRedirect();
+    }
 });
