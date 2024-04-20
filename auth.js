@@ -3,7 +3,7 @@ const msalConfig = {
     auth: {
         clientId: "6cec9e80-48f0-4873-9776-076045267714", // Your Application (client) ID from Azure AD B2C
         authority: "https://heyhooley.b2clogin.com/heyhooley.onmicrosoft.com/B2C_1_signupsignin", // Authority URL
-        redirectUri: "https://orange-sky-0e951470f.5.azurestaticapps.net", // Redirect URI configured in Azure AD B2C
+        redirectUri: "https://witty-forest-0f9e2ac0f.5.azurestaticapps.net", // Redirect URI configured in Azure AD B2C
         knownAuthorities: ["heyhooley.b2clogin.com"], // Specify your B2C login domain as a known authority
     },
     cache: {
