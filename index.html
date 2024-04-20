@@ -3,25 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Application</title>
+    <title>HeyHooley Web App</title>
+    <!-- Optional: Add a link to a CSS file for styling if needed -->
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #loginButton, #logoutButton { margin: 10px; }
+        #userInfo { margin: 20px; color: green; }
+    </style>
 </head>
 <body>
     <div id="loginButton" style="display:none;">
-        <!-- Ensure onclick is correctly handling the login function -->
         <button onclick="login()">Login</button>
     </div>
     <div id="logoutButton" style="display:none;">
-        <!-- Ensure onclick is correctly handling the logout function -->
         <button onclick="logout()">Logout</button>
     </div>
     <div id="userInfo" style="display:none;">
-        <!-- This div will display user information if logged in -->
-        <!-- User information displayed here -->
+        <!-- User information will be displayed here -->
     </div>
 
-    <!-- MSAL JavaScript library to handle authentication -->
+    <!-- MSAL library -->
     <script src="https://alcdn.msauth.net/browser/2.19.0/js/msal-browser.min.js"></script>
-    <!-- Custom script to handle the UI and authentication logic -->
+    <!-- Custom authentication script -->
     <script src="auth.js"></script>
 </body>
 </html>
