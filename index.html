@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeyHooley Web App</title>
+    <!-- Optional: Add a link to a CSS file for styling if needed -->
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #loginButton, #logoutButton { margin: 10px; }
+        #userInfo { margin: 20px; color: green; }
+    </style>
+</head>
+<body>
+    <div id="loginButton" style="display:none;">
+        <button onclick="login()">Login</button>
+    </div>
+    <div id="logoutButton" style="display:none;">
+        <button onclick="logout()">Logout</button>
+    </div>
+    <div id="userInfo" style="display:none;">
+        <!-- User information will be displayed here -->
+    </div>
+
+    <!-- MSAL library -->
+    <script type="text/javascript" src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
+    <!-- Custom authentication script -->
+    <script src="auth.js"></script>
+</body>
+</html>
